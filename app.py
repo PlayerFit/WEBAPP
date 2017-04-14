@@ -1,4 +1,7 @@
 from flask import Flask, redirect, url_for, request, render_template
+from models import Prospect
+from database import db_session
+
 app = Flask(__name__)
 
 @app.route('/')
@@ -23,3 +26,7 @@ def players():
 def player(player_id):
     #TODO: show all of the widgets for the player with player_id
     return 'Player %d' % player_id
+
+# Initialize Database
+from database import init_db
+init_db()
