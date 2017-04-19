@@ -6,3 +6,6 @@ python -m flask run
 
 # Connect to DB
 psql "postgres://alhqpbkb:WQ-RjLbw5LrkrBMJcFKWWfbaxhsyReTs@babar.elephantsql.com:5432/alhqpbkb"
+
+# Start redis server
+redis-server

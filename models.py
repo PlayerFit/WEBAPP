@@ -21,6 +21,7 @@ class Prospect(object):
         self.verified = verified
         self.protected = protected
         self.utc_offset = utc_offset
+        self.has_tweets = False
 
 prospect_table = Table('prospect', metadata,
     Column('id', Text, primary_key=True),
@@ -36,9 +37,32 @@ prospect_table = Table('prospect', metadata,
     Column('verified', Boolean, nullable=False),
     Column('protected', Boolean, nullable=False),
     Column('utc_offset', BigInteger, nullable=False),
+    Column('has_tweets', Boolean, nullable=False),
 )
 
-mapper(Prospect, prospect_table)
+class Tweet(object):
+    query = db_session.query_property()
 
-# class Tweet(object):
-#     query = db_session.query_property()
+    def __init__(self, id, prospect_id, body, created_at, favorite_count, retweet_count, retweet):
+        self.id = id
+        self.prospect_id = prospect_id
+        self.body = body
+        self.created_at = created_at
+        self.favorite_count = favorite_count
+        self.retweet_count = retweet_count
+        self.retweet = retweet
+
+tweet_table = Table('tweet', metadata,
+    Column('id', Text, primary_key=True),
+    Column('prospect_id', Text, nullable=False),
+    Column('body', Text, nullable=False),
+    Column('created_at', DateTime, nullable=False),
+    Column('favorite_count', BigInteger, nullable=True),
+    Column('retweet_count', BigInteger, nullable=False),
+    Column('retweet', Boolean, nullable=False),
+)
+
+
+
+mapper(Prospect, prospect_table)
+mapper(Tweet, tweet_table)
