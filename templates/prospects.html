@@ -9,8 +9,7 @@
           <div class="ui submit button">Add</div>
         </div>
     </form>
-    <!-- <div class="ui middle aligned divided selection list"> -->
-    <div class="ui middle aligned inverted divided link items">
+    <div class="ui middle aligned divided link items">
         {% for item in items %}
         <div class="item" data-value={{ item.id }}>
             <img class="ui small image" src={{ item.img_url }}>
@@ -23,6 +22,7 @@
     </div>
 {% endblock %}
 
+{% block full_content %}{% endblock %}
 {% block footer %}
   <script>
     $(function() {
