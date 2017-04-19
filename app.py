@@ -1,5 +1,5 @@
 from flask import Flask, redirect, url_for, request, render_template
-from models import Prospect
+from models import Prospect, Tweet
 from database import db_session
 from twitter import add_prospect
 
@@ -26,8 +26,10 @@ def prospect():
 
 @app.route('/prospect/<int:prospect_id>')
 def prospect_one(prospect_id):
-    #TODO: show all of the widgets for the player with player_id
-    return 'Prospect %d' % prospect_id
+    pid = str(prospect_id)
+    prospect = Prospect.query.filter_by(id=pid).one()
+    # tweets = Tweet.query.filter_by(prospect_id=pid).all()
+    return render_template('prospect.html', prospect=prospect)
 
 # Initialize Database
 from database import init_db

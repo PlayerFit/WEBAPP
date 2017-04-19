@@ -1,0 +1,34 @@
+<div class="ui card">
+    <div class="content">
+        <img class="right floated mini ui image" src={{ prospect.img_url }}>
+        <div class="header">
+            {{ prospect.name }}
+        </div>
+        <div class="meta">
+            <span class="date">Created account {{ prospect.created_at }}</span>
+        </div>
+    </div>
+    <div class="content">
+       <div class="description">
+           {{ prospect.description }}
+       </div>
+    </div>
+    <div class="extra content">
+        <div>
+            <i class="twitter icon"></i>
+            {{ prospect.tweet_count }} Tweets
+        </div>
+        <div>
+            <i class="like icon"></i>
+            {{ prospect.favorite_count }} Favorites
+        </div>
+        <div>
+            <i class="user icon"></i>
+            {{ prospect.following_count }} Following
+        </div>
+        <div>
+            <i class="users icon"></i>
+            {{ prospect.follower_count }} Followers
+        </div>
+    </div>
+ </div>
