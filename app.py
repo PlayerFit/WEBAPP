@@ -3,6 +3,8 @@ from models import Prospect, Tweet
 from database import db_session
 from twitter import add_prospect
 
+import helpers as h
+
 app = Flask(__name__)
 
 @app.route('/')
@@ -28,8 +30,8 @@ def prospect():
 def prospect_one(prospect_id):
     pid = str(prospect_id)
     prospect = Prospect.query.filter_by(id=pid).one()
-    # tweets = Tweet.query.filter_by(prospect_id=pid).all()
-    return render_template('prospect.html', prospect=prospect)
+    tweets_by_hour = h.get_tweets_by_hour(pid)
+    return render_template('prospect.html', prospect=prospect, tweets_by_hour=tweets_by_hour)
 
 # Initialize Database
 from database import init_db
