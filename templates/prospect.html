@@ -1,11 +1,18 @@
 {% extends "base.html" %}
 {% block title %}{% endblock %}
 {% block header %}{% endblock %}
+{% block content %}{% endblock %}
 
-{% block content %}
-    {% include "user_card.html" ignore missing with context %}
-    {% include "recent_profanities.html" ignore missing with context %}
+{% block full_content %}
+    <div class="one column row">
+        {% include "user_card.html" ignore missing with context %}
+        {% include "hourly_usage.html" ignore missing with context %}
+        {% include "recent_profanities.html" ignore missing with context %}
+    </div>
 {% endblock %}
 
 {% block footer %}
+    <script>
+        document.body.style.backgroundColor = "#50e0ff";
+    </script>
 {% endblock %}

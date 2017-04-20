@@ -1,0 +1,33 @@
+<div class="ui segment">
+    <canvas id="hourlyChart" width="400" height="400"></canvas>
+</div>
+<script>
+var ctx = document.getElementById("hourlyChart").getContext("2d");
+ctx.canvas.width = 900;
+ctx.canvas.height = 270;
+var hourlyChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: [
+            '12am','1am','2am','3am','4am','5am','6am','7am','8am','9am','10am','11am',
+            '12pm','1pm','2pm','3pm','4pm','5pm','6pm','7pm','8pm','9pm','10pm','11pm'
+        ],
+        datasets: [{
+            label: 'Tweets by Hour',
+            data: {{ tweets_by_hour }},
+            backgroundColor: 'rgba(54,162,132,0.2)',
+            borderColor: 'rgba(54,162,132,1)',
+            borderWidth: 1
+        }],
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero:true
+                    }
+                }]
+            }
+        }
+    },
+});
+</script>

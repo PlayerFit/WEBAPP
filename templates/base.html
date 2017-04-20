@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/static/css/normalize.css">
     <link rel="stylesheet" href="/static/css/semantic.css">
     <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/components/icon.min.css'>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
     <script src="/static/js/vendor/modernizr.js"></script>
     {% block head %}{% endblock %}
   </head>
@@ -28,6 +29,7 @@
       </div>
     </div>
 
+    <!-- WARN: use either content or full_content when extending not both!! -->
     <div class="ui grid">
       <div class="four wide column">
       </div>
@@ -40,6 +42,21 @@
       <div class="four wide column">
       </div>
     </div>
+
+    <!-- WARN: use either content or full_content when extending not both!! -->
+    <div class="ui grid" style="margin-top: -38px">
+      <div class="one wide column">
+      </div>
+      <div class="ten wide column">
+          <div id="full-main">
+            {% block full_content %}
+            {% endblock %}
+          </div>
+      </div>
+      <div class="one wide column">
+      </div>
+    </div>
+
     <script src="/static/js/vendor/jquery.js"></script>
     <script src="/static/js/semantic.min.js"></script>
     {% block footer %}
