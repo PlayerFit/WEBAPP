@@ -28,8 +28,9 @@ def prospect():
 def prospect_one(prospect_id):
     pid = str(prospect_id)
     prospect = Prospect.query.filter_by(id=pid).one()
-    # tweets = Tweet.query.filter_by(prospect_id=pid).all()
-    return render_template('prospect.html', prospect=prospect)
+    tweets = Tweet.query.filter_by(prospect_id=pid).all()
+    ten_tweets = tweets[:10]
+    return render_template('prospect.html', prospect=prospect, tweets=ten_tweets)
 
 # Initialize Database
 from database import init_db
