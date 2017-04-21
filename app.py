@@ -1,4 +1,5 @@
 from flask import Flask, redirect, url_for, request, render_template
+from celery import Celery
 from models import Prospect, Tweet
 from database import db_session
 from twitter import add_prospect
@@ -6,18 +7,23 @@ from twitter import add_prospect
 import helpers as h
 
 app = Flask(__name__)
+celery = Celery(app.name, broker='redis://localhost:6379', backend='redis://localhost:6379')
+
+@celery.task
+def add_together(a,b):
+    return a + b
 
 @app.route('/')
 def home():
-    #TODO: Render homepage HTML
     return render_template('home.html')
 
 @app.route('/prospect', methods=['POST', 'GET'])
 def prospect():
-    #TODO: render a list of all players with data available
     if request.method == 'POST':
         #TODO: switch to Redis Queue for data fetching jobs
         prospect_handle = request.form["handle"]
+        result = add_together.delay(10,10).wait()
+        print result
         add_prospect(prospect_handle)
         return redirect(url_for('prospect'))
     elif request.method == 'GET':

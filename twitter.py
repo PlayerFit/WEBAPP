@@ -1,3 +1,4 @@
+from app.task import task
 from application_only_auth import Client, ClientException
 from models import Prospect, Tweet
 from database import db_session
@@ -41,13 +42,14 @@ def add_prospect(handle):
         db_session.merge(prospect)
 
     # Add redis task to retrieve the tweets for prospect
-    job = queue.enqueue_call(
-        func=get_tweets, args=(prospect.id, ), result_ttl=0
-    )
-    print job
+    # job = queue.enqueue_call(
+    #     func=get_tweets, args=(prospect.id, ), result_ttl=0
+    # )
+    get_tweets.delay(prospect.id)
 
     db_session.commit()
 
+@task
 def get_tweets(prospect_id):
     tweet_id = None
     # Begin collecting tweets 200/req up to 3200 tweets

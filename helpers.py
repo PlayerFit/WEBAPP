@@ -10,7 +10,6 @@ def get_tweets_by_hour(prospect_id):
     for pair in results:
         hour = shift_by_timezone(int(pair[1]), utc_offset)
         data[hour] = int(pair[0])
-    print data
     return data
 
 def shift_by_timezone(hour, utc_offset):
