@@ -1,5 +1,5 @@
 from application_only_auth import Client, ClientException
-from models import Prospect, Tweet
+from models import Prospect, Tweet, Hashtag, URL, UserMention
 from database import db_session
 from worker import queue
 from rq.job import Job
@@ -41,17 +41,18 @@ def add_prospect(handle):
         db_session.merge(prospect)
 
     # Add redis task to retrieve the tweets for prospect
-    job = queue.enqueue_call(
-        func=get_tweets, args=(prospect.id, ), result_ttl=0
-    )
-    print job
+    # job = queue.enqueue_call(
+    #     func=get_tweets, args=(prospect.id, ), result_ttl=0
+    # )
+    # print job
+    get_tweets(prospect.id)
 
     db_session.commit()
 
 def get_tweets(prospect_id):
     tweet_id = None
     # Begin collecting tweets 200/req up to 3200 tweets
-    for batch in range(0, 16):
+    for batch in range(0, 1):
         tweet_id = add_tweet_batch(prospect_id, tweet_id)
         if tweet_id == 0:
             break
@@ -74,6 +75,9 @@ def add_tweet_batch(prospect_id, max_id=None):
     # Save the tweets
     for tweet in tweets:
         add_tweet(tweet, prospect_id)
+        add_hashtags(tweet, prospect_id)
+        add_urls(tweet, prospect_id)
+        add_user_mentions(tweet, prospect_id)
     return tweets[-1]["id"]
 
 def add_tweet(tweet, prospect_id):
@@ -83,6 +87,12 @@ def add_tweet(tweet, prospect_id):
     else:
         retweet = False
         favorite_count = tweet['favorite_count']
+    country = None
+    city = None
+    if 'place' in tweet:
+        if tweet['place']:
+            country = tweet['place']['country']
+            city = tweet['place']['full_name']
     t = Tweet(
         id=tweet['id_str'],
         prospect_id=prospect_id,
@@ -90,6 +100,41 @@ def add_tweet(tweet, prospect_id):
         created_at=tweet['created_at'],
         favorite_count=favorite_count,
         retweet_count=tweet['retweet_count'],
-        retweet=retweet
+        retweet=retweet,
+        country_location=country,
+        city_location=city
     )
     db_session.merge(t)
+
+def add_hashtags(tweet, prospect_id):
+    for hashtag_list in tweet['entities']['hashtags']:
+        if len(hashtag_list) > 0:
+            hashtag = hashtag_list["text"]
+            h = Hashtag(
+                tweet_id=tweet['id_str'],
+                prospect_id=prospect_id,
+                hashtag=hashtag
+            )
+            db_session.merge(h)
+
+def add_urls(tweet, prospect_id):
+    for url_list in tweet['entities']['urls']:
+        if len(url_list) > 0:
+            url = url_list['display_url']
+            u = URL(
+                tweet_id=tweet['id_str'],
+                prospect_id=prospect_id,
+                url=url
+            )
+            db_session.merge(u)
+
+def add_user_mentions(tweet, prospect_id):
+    for user_mention_list in tweet['entities']['user_mentions']:
+        if len(user_mention_list) > 0:
+            user_mention = user_mention_list['screen_name']
+            um = UserMention(
+                tweet_id=tweet['id_str'],
+                prospect_id=prospect_id,
+                user_mention=user_mention
+            )
+            db_session.merge(um)

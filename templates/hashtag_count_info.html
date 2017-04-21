@@ -1,0 +1,23 @@
+<h3>Hashtag Counter</h3>
+<table class="ui very basic collapsing celled table">
+  <thead>
+    <tr>
+      <th>Hashtag</th>
+      <th>Number of Times Used</th>
+  </tr></thead>
+  <tbody>
+    {% for hashtag in hashtags %}
+    <tr>
+      <td>
+        <h4 class="ui image header">
+          <div class="content">
+            {{ hashtag[0] }}
+          </div>
+        </h4></td>
+      <td>
+        {{ hashtag[1] }}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>

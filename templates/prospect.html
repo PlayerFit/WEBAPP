@@ -7,7 +7,9 @@
     <div class="one column row">
         {% include "user_card.html" ignore missing with context %}
         {% include "hourly_usage.html" ignore missing with context %}
-        {% include "recent_profanities.html" ignore missing with context %}
+        {% include "hashtag_count_info.html" ignore missing with context %}
+        {% include "user_mention_count_info.html" ignore missing with context %}
+        {% include "location_count_info.html" ignore missing with context %}
     </div>
 {% endblock %}
 
