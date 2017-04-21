@@ -1,0 +1,23 @@
+<h3>User Mention Counter</h3>
+<table class="ui very basic collapsing celled table">
+  <thead>
+    <tr>
+      <th>User Mention</th>
+      <th>Number of Times Used</th>
+  </tr></thead>
+  <tbody>
+    {% for user_mention in user_mentions %}
+    <tr>
+      <td>
+        <h4 class="ui image header">
+          <div class="content">
+            {{ user_mention[0] }}
+          </div>
+        </h4></td>
+      <td>
+        {{ user_mention[1] }}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>

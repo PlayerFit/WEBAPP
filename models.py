@@ -1,4 +1,4 @@
-from sqlalchemy import Table, Column, DateTime, BigInteger, Boolean, DateTime, Text
+from sqlalchemy import Table, Column, DateTime, BigInteger, Boolean, DateTime, Text, Integer
 from sqlalchemy.orm import mapper
 from sqlalchemy.dialects.sqlite.base import BOOLEAN
 from database import metadata, db_session
@@ -43,7 +43,7 @@ prospect_table = Table('prospect', metadata,
 class Tweet(object):
     query = db_session.query_property()
 
-    def __init__(self, id, prospect_id, body, created_at, favorite_count, retweet_count, retweet):
+    def __init__(self, id, prospect_id, body, created_at, favorite_count, retweet_count, retweet, country_location, city_location):
         self.id = id
         self.prospect_id = prospect_id
         self.body = body
@@ -51,6 +51,8 @@ class Tweet(object):
         self.favorite_count = favorite_count
         self.retweet_count = retweet_count
         self.retweet = retweet
+        self.country_location = country_location
+        self.city_location = city_location
 
 tweet_table = Table('tweet', metadata,
     Column('id', Text, primary_key=True),
@@ -60,9 +62,57 @@ tweet_table = Table('tweet', metadata,
     Column('favorite_count', BigInteger, nullable=True),
     Column('retweet_count', BigInteger, nullable=False),
     Column('retweet', Boolean, nullable=False),
+    Column('country_location', Text, nullable=True),
+    Column('city_location', Text, nullable=True)
 )
 
+class Hashtag(object):
+    query = db_session.query_property()
 
+    def __init__(self, tweet_id, prospect_id, hashtag):
+        self.tweet_id = tweet_id
+        self.prospect_id = prospect_id
+        self.hashtag = hashtag
+
+hashtag_table = Table('hashtag', metadata,
+    Column('id', Integer, primary_key=True, autoincrement=True),
+    Column('tweet_id', Text, nullable=False),
+    Column('prospect_id', Text, nullable=False),
+    Column('hashtag', Text, nullable=False)
+)
+
+class URL(object):
+    query = db_session.query_property()
+
+    def __init__(self, tweet_id, prospect_id, url):
+        self.tweet_id = tweet_id
+        self.prospect_id = prospect_id
+        self.url = url
+
+url_table = Table('url', metadata,
+    Column('id', Integer, primary_key=True, autoincrement=True),
+    Column('tweet_id', Text, nullable=False),
+    Column('prospect_id', Text, nullable=False),
+    Column('url', Text, nullable=False)
+)
+
+class UserMention(object):
+    query = db_session.query_property()
+
+    def __init__(self, tweet_id, prospect_id, user_mention):
+        self.tweet_id = tweet_id
+        self.prospect_id = prospect_id
+        self.user_mention = user_mention
+
+user_mention_table = Table('user_mention', metadata,
+    Column('id', Integer, primary_key=True, autoincrement=True),
+    Column('tweet_id', Text, nullable=False),
+    Column('prospect_id', Text, nullable=False),
+    Column('user_mention', Text, nullable=False)
+)
 
 mapper(Prospect, prospect_table)
 mapper(Tweet, tweet_table)
+mapper(Hashtag, hashtag_table)
+mapper(URL, url_table)
+mapper(UserMention, user_mention_table)

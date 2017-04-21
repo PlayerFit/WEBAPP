@@ -1,5 +1,5 @@
-from sqlalchemy import func
-from models import Tweet, Prospect
+from sqlalchemy import func, desc
+from models import Tweet, Prospect, Hashtag, UserMention, URL
 from database import db_session
 
 def get_tweets_by_hour(prospect_id):
@@ -18,3 +18,18 @@ def shift_by_timezone(hour, utc_offset):
     if result < 0:
         result += 24
     return result % 24
+
+def get_most_common_hashtags(prospect_id):
+    results = db_session.query(Hashtag.hashtag.label('Hashtag'), func.count(Hashtag.id).label('Count')).filter_by(prospect_id=prospect_id).group_by('Hashtag').order_by(desc('Count')).limit(10).all()
+    return results
+
+def get_most_common_handles(prospect_id):
+    results = db_session.query(UserMention.user_mention.label('User Mention'), func.count(UserMention.id).label('Count')).filter_by(prospect_id=prospect_id).order_by(desc('Count')).group_by('User Mention').limit(10).all()
+    return results
+
+def get_most_common_locations(prospect_id):
+    results = db_session.query(Tweet.city_location.label('Location'), Tweet.country_location.label('Country'), func.count(Tweet.id).label('Count')).filter_by(prospect_id=prospect_id).order_by(desc('Count')).group_by('Country', 'Location').limit(10).all()
+    return results
+
+def get_most_common_profanities(prospect_id):
+    pass

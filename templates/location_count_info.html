@@ -1,0 +1,23 @@
+<h3>Location Counter</h3>
+<table class="ui very basic collapsing celled table">
+  <thead>
+    <tr>
+      <th>Location</th>
+      <th>Number of Times Used</th>
+  </tr></thead>
+  <tbody>
+    {% for location in locations %}
+    <tr>
+      <td>
+        <h4 class="ui image header">
+          <div class="content">
+            {{ location[0] }}
+          </div>
+        </h4></td>
+      <td>
+        {{ location[1] }}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
