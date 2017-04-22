@@ -46,17 +46,9 @@
     </div>
 
     <!-- WARN: use either content or full_content when extending not both!! -->
-    <div class="ui grid" style="margin-top: -38px">
-      <div class="one wide column">
-      </div>
-      <div class="ten wide column">
-          <div id="full-main">
-            {% block full_content %}
-            {% endblock %}
-          </div>
-      </div>
-      <div class="one wide column">
-      </div>
+    <div id="full-main" class="ui container" style="margin-top: -38px">
+        {% block full_content %}
+        {% endblock %}
     </div>
 
     <script src="/static/js/vendor/jquery.js"></script>

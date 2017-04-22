@@ -40,8 +40,9 @@ def prospect_one(prospect_id):
     top_hashtags = h.get_most_common_hashtags(pid)
     top_user_mentions = h.get_most_common_handles(pid)
     top_locations = h.get_most_common_locations(pid)
+    images = h.get_image_urls(pid)
     return render_template('prospect.html', prospect=prospect, tweets_by_hour=tweets_by_hour, hashtags=top_hashtags,
-        user_mentions=top_user_mentions, locations=top_locations)
+        user_mentions=top_user_mentions, locations=top_locations, images=images)
 
 # Initialize Database
 from database import init_db

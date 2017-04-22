@@ -4,17 +4,57 @@
 {% block content %}{% endblock %}
 
 {% block full_content %}
-    <div class="one column row">
-        {% include "user_card.html" ignore missing with context %}
-        {% include "hourly_usage.html" ignore missing with context %}
-        {% include "hashtag_count_info.html" ignore missing with context %}
-        {% include "user_mention_count_info.html" ignore missing with context %}
-        {% include "location_count_info.html" ignore missing with context %}
+    <div class="ui secondary pointing menu">
+        <a class="item active" data-value="1">
+        Bio
+        </a>
+        <a class="item" data-value="2">
+        Photos
+        </a>
+    </div>
+    <div data-bind="visible: activeSection() == 1">
+        <div class="ui two column grid">
+            <div class="four wide column">
+                {% include "user_card.html" ignore missing with context %}
+            </div>
+            <div class="twelve wide column">
+                {% include "hourly_usage.html" ignore missing with context %}
+            </div>
+        </div>
+        <div class="ui three column grid">
+            <div class="column">
+                {% include "hashtag_count_info.html" ignore missing with context %}
+            </div>
+            <div class="column">
+                {% include "user_mention_count_info.html" ignore missing with context %}
+            </div>
+            <div class="column">
+                {% include "location_count_info.html" ignore missing with context %}
+            </div>
+        </div>
+    </div>
+    <div data-bind="visible: activeSection() == 2">
+        {% for image in images %}
+            <img class="ui medium bordered image" src={{ image[0] }}>
+        {% endfor %}
     </div>
 {% endblock %}
 
 {% block footer %}
     <script>
-        document.body.style.backgroundColor = "#50e0ff";
+        var viewModel = {
+            activeSection: ko.observable(1)
+        };
+        ko.applyBindings(viewModel);
+        document.body.style.backgroundColor = "#B6BFBF";
+        $(function() {
+          $('a.item').on('click', function(e){
+            var item = $(e.target);
+            item.siblings().removeClass('active');
+            item.addClass('active');
+            viewModel.activeSection(parseInt(item.data('value')));
+            console.log(viewModel.activeSection())
+          });
+        });
     </script>
 {% endblock %}

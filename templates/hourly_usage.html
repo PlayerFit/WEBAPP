@@ -1,4 +1,4 @@
-<div class="ui segment">
+<div class="ui colored black segment">
     <canvas id="hourlyChart" width="400" height="400"></canvas>
 </div>
 <script>
@@ -15,8 +15,8 @@ var hourlyChart = new Chart(ctx, {
         datasets: [{
             label: 'Tweets by Hour',
             data: {{ tweets_by_hour }},
-            backgroundColor: 'rgba(54,162,132,0.2)',
-            borderColor: 'rgba(54,162,132,1)',
+            backgroundColor: 'rgba(0,0,0,0.2)',
+            borderColor: 'rgba(0,0,0,1)',
             borderWidth: 1
         }],
         options: {

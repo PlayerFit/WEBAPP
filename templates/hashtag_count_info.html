@@ -1,9 +1,8 @@
-<h3>Hashtag Counter</h3>
-<table class="ui very basic collapsing celled table">
+<table class="ui black table">
   <thead>
     <tr>
       <th>Hashtag</th>
-      <th>Number of Times Used</th>
+      <th>Total</th>
   </tr></thead>
   <tbody>
     {% for hashtag in hashtags %}
@@ -11,7 +10,7 @@
       <td>
         <h4 class="ui image header">
           <div class="content">
-            {{ hashtag[0] }}
+            #{{ hashtag[0] }}
           </div>
         </h4></td>
       <td>

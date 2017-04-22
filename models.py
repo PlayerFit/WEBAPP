@@ -96,6 +96,21 @@ url_table = Table('url', metadata,
     Column('url', Text, nullable=False)
 )
 
+class Media(object):
+    query = db_session.query_property()
+
+    def __init__(self, tweet_id, prospect_id, url):
+        self.tweet_id = tweet_id
+        self.prospect_id = prospect_id
+        self.url = url
+
+media_table = Table('media', metadata,
+    Column('id', Integer, primary_key=True, autoincrement=True),
+    Column('tweet_id', Text, nullable=False),
+    Column('prospect_id', Text, nullable=False),
+    Column('url', Text, nullable=False)
+)
+
 class UserMention(object):
     query = db_session.query_property()
 
@@ -115,4 +130,5 @@ mapper(Prospect, prospect_table)
 mapper(Tweet, tweet_table)
 mapper(Hashtag, hashtag_table)
 mapper(URL, url_table)
+mapper(Media, media_table)
 mapper(UserMention, user_mention_table)

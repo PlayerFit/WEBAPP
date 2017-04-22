@@ -1,6 +1,6 @@
-from app.task import task
+from celery.task import task
 from application_only_auth import Client, ClientException
-from models import Prospect, Tweet, Hashtag, URL, UserMention
+from models import Prospect, Tweet, Hashtag, URL, Media, UserMention
 from database import db_session
 from worker import queue
 from rq.job import Job
@@ -79,6 +79,7 @@ def add_tweet_batch(prospect_id, max_id=None):
         add_tweet(tweet, prospect_id)
         add_hashtags(tweet, prospect_id)
         add_urls(tweet, prospect_id)
+        add_media(tweet, prospect_id)
         add_user_mentions(tweet, prospect_id)
     return tweets[-1]["id"]
 
@@ -129,6 +130,17 @@ def add_urls(tweet, prospect_id):
                 url=url
             )
             db_session.merge(u)
+
+def add_media(tweet, prospect_id):
+    media_list = tweet['entities']['media']
+    for media in media_list:
+        url = url_list['media_url']
+        u = Media(
+            tweet_id=tweet['id_str'],
+            prospect_id=prospect_id,
+            url=url
+        )
+        db_session.merge(u)
 
 def add_user_mentions(tweet, prospect_id):
     for user_mention_list in tweet['entities']['user_mentions']:
