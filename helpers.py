@@ -1,5 +1,5 @@
 from sqlalchemy import func, desc
-from models import Tweet, Prospect, Hashtag, UserMention, URL
+from models import Tweet, Prospect, Hashtag, Media, UserMention, URL
 from database import db_session
 
 def get_tweets_by_hour(prospect_id):
@@ -35,5 +35,5 @@ def get_most_common_profanities(prospect_id):
     pass
 
 def get_image_urls(prospect_id):
-    results = Media.query.with_entities(Media.urls).filter_by(prospect_id=prospect_id).all()
+    results = Media.query.with_entities(Media.url).filter_by(prospect_id=prospect_id).all()
     return results
