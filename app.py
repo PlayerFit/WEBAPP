@@ -8,7 +8,11 @@ import helpers as h
 
 # SETUP APP
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'secret'
+app.config.update(
+    CELERY_BROKER_URL='redis://localhost:6379',
+    CELERY_RESULT_BACKEND='redis://localhost:6379',
+    SECRET_KEY='secret'
+)
 # APP SETUP
 
 # SETUP DB
@@ -25,7 +29,20 @@ login_manager.login_view = "login"
 # LOGIN SETUP
 
 # SETUP CELERY
-celery = Celery(app.name, broker='redis://localhost:6379', backend='redis://localhost:6379')
+def make_celery(app):
+    celery = Celery(app.import_name, backend=app.config['CELERY_RESULT_BACKEND'],
+                    broker=app.config['CELERY_BROKER_URL'])
+    celery.conf.update(app.config)
+    TaskBase = celery.Task
+    class ContextTask(TaskBase):
+        abstract = True
+        def __call__(self, *args, **kwargs):
+            with app.app_context():
+                return TaskBase.__call__(self, *args, **kwargs)
+    celery.Task = ContextTask
+    return celery
+
+celery = make_celery(app)
 # CELERY SETUP
 
 ####################################
@@ -98,7 +115,7 @@ def prospect():
         add_prospect(prospect_handle)
         return redirect(url_for('prospect'))
     elif request.method == 'GET':
-        prospect_list = Prospect.query.all()
+        prospect_list = Prospect.query.with_entities(Prospect.id, Prospect.img_url, Prospect.name).all()
         return render_template("prospects.html", items=prospect_list)
     else:
         return redirect(url_for('home'))
