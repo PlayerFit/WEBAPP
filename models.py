@@ -1,10 +1,36 @@
-from sqlalchemy import Table, Column, DateTime, BigInteger, Boolean, DateTime, Text, Integer
-from sqlalchemy.orm import mapper
-from sqlalchemy.dialects.sqlite.base import BOOLEAN
-from database import metadata, db_session
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import UserMixin
+from passlib.apps import custom_app_context as pwd_context
+db = SQLAlchemy()
 
-class Prospect(object):
-    query = db_session.query_property()
+class User(db.Model, UserMixin):
+    __tablename__ = 'users'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(32), index=True)
+    password_hash = db.Column(db.Text)
+
+    def hash_password(self, password):
+        self.password_hash = pwd_context.encrypt(password)
+
+    def verify_password(self, password):
+        return pwd_context.verify(password, self.password_hash)
+
+class Prospect(db.Model):
+    __tablename__ = 'prospect'
+    id = db.Column(db.Text, primary_key=True)
+    img_url = db.Column(db.Text, nullable=False)
+    screen_name = db.Column(db.Text, nullable=False)
+    name = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, nullable=False)
+    description = db.Column(db.Text, nullable=False)
+    tweet_count = db.Column(db.Integer, nullable=False)
+    favorite_count = db.Column(db.Integer, nullable=False)
+    follower_count = db.Column(db.Integer, nullable=False)
+    following_count = db.Column(db.Integer, nullable=False)
+    protected = db.Column(db.Boolean, nullable=False)
+    verified = db.Column(db.Boolean, nullable=False)
+    utc_offset = db.Column(db.Integer, nullable=False)
+    has_tweets = db.Column(db.Boolean, nullable=False)
 
     def __init__(self, id, img_url, screen_name, name, created_at, description, tweet_count, favorite_count, follower_count, following_count,
         verified, protected, utc_offset):
@@ -23,25 +49,16 @@ class Prospect(object):
         self.utc_offset = utc_offset
         self.has_tweets = False
 
-prospect_table = Table('prospect', metadata,
-    Column('id', Text, primary_key=True),
-    Column('img_url', Text, nullable=False),
-    Column('screen_name', Text, nullable=False),
-    Column('name', Text, nullable=False),
-    Column('created_at', DateTime, nullable=False), ## put it in local time
-    Column('description', Text, nullable=False),
-    Column('tweet_count', BigInteger, nullable=False),
-    Column('favorite_count', BigInteger, nullable=False),
-    Column('follower_count', Text, nullable=False),
-    Column('following_count', BigInteger, nullable=False),
-    Column('verified', Boolean, nullable=False),
-    Column('protected', Boolean, nullable=False),
-    Column('utc_offset', BigInteger, nullable=False),
-    Column('has_tweets', Boolean, nullable=False),
-)
-
-class Tweet(object):
-    query = db_session.query_property()
+class Tweet(db.Model):
+    id = db.Column(db.Text, primary_key=True)
+    prospect_id = db.Column(db.Text, nullable=False)
+    body = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, nullable=False)
+    favorite_count = db.Column(db.Integer, nullable=False)
+    retweet_count = db.Column(db.Integer, nullable=False)
+    retweet = db.Column(db.Boolean, nullable=False)
+    country_location = db.Column(db.Text, nullable=True)
+    city_location = db.Column(db.Integer, nullable=True)
 
     def __init__(self, id, prospect_id, body, created_at, favorite_count, retweet_count, retweet, country_location, city_location):
         self.id = id
@@ -54,81 +71,46 @@ class Tweet(object):
         self.country_location = country_location
         self.city_location = city_location
 
-tweet_table = Table('tweet', metadata,
-    Column('id', Text, primary_key=True),
-    Column('prospect_id', Text, nullable=False),
-    Column('body', Text, nullable=False),
-    Column('created_at', DateTime, nullable=False),
-    Column('favorite_count', BigInteger, nullable=True),
-    Column('retweet_count', BigInteger, nullable=False),
-    Column('retweet', Boolean, nullable=False),
-    Column('country_location', Text, nullable=True),
-    Column('city_location', Text, nullable=True)
-)
-
-class Hashtag(object):
-    query = db_session.query_property()
+class Hashtag(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    tweet_id = db.Column(db.Text, nullable=False)
+    prospect_id = db.Column(db.Text, nullable=False)
+    hashtag = db.Column(db.Text, nullable=False)
 
     def __init__(self, tweet_id, prospect_id, hashtag):
         self.tweet_id = tweet_id
         self.prospect_id = prospect_id
         self.hashtag = hashtag
 
-hashtag_table = Table('hashtag', metadata,
-    Column('id', Integer, primary_key=True, autoincrement=True),
-    Column('tweet_id', Text, nullable=False),
-    Column('prospect_id', Text, nullable=False),
-    Column('hashtag', Text, nullable=False)
-)
-
-class URL(object):
-    query = db_session.query_property()
+class URL(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    tweet_id = db.Column(db.Text, nullable=False)
+    prospect_id = db.Column(db.Text, nullable=False)
+    url = db.Column(db.Text, nullable=False)
 
     def __init__(self, tweet_id, prospect_id, url):
         self.tweet_id = tweet_id
         self.prospect_id = prospect_id
         self.url = url
 
-url_table = Table('url', metadata,
-    Column('id', Integer, primary_key=True, autoincrement=True),
-    Column('tweet_id', Text, nullable=False),
-    Column('prospect_id', Text, nullable=False),
-    Column('url', Text, nullable=False)
-)
-
-class Media(object):
-    query = db_session.query_property()
+class Media(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    tweet_id = db.Column(db.Text, nullable=False)
+    prospect_id = db.Column(db.Text, nullable=False)
+    url = db.Column(db.Text, nullable=False)
 
     def __init__(self, tweet_id, prospect_id, url):
         self.tweet_id = tweet_id
         self.prospect_id = prospect_id
         self.url = url
 
-media_table = Table('media', metadata,
-    Column('id', Integer, primary_key=True, autoincrement=True),
-    Column('tweet_id', Text, nullable=False),
-    Column('prospect_id', Text, nullable=False),
-    Column('url', Text, nullable=False)
-)
-
-class UserMention(object):
-    query = db_session.query_property()
+class UserMention(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    tweet_id = db.Column(db.Text, nullable=False)
+    prospect_id = db.Column(db.Text, nullable=False)
+    user_mention = db.Column(db.Text, nullable=False)
 
     def __init__(self, tweet_id, prospect_id, user_mention):
         self.tweet_id = tweet_id
         self.prospect_id = prospect_id
         self.user_mention = user_mention
-
-user_mention_table = Table('user_mention', metadata,
-    Column('id', Integer, primary_key=True, autoincrement=True),
-    Column('tweet_id', Text, nullable=False),
-    Column('prospect_id', Text, nullable=False),
-    Column('user_mention', Text, nullable=False)
-)
-
-mapper(Prospect, prospect_table)
-mapper(Tweet, tweet_table)
-mapper(Hashtag, hashtag_table)
-mapper(URL, url_table)
-mapper(Media, media_table)
-mapper(UserMention, user_mention_table)

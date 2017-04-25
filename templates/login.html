@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}{% endblock %}
+{% block header %}{% endblock %}
+
+{% block content %}
+    <div class="ui fluid two item top attached huge inverted blue menu">
+        <a class="active blue item" data-value='login'>
+            Login
+        </a>
+        <a class="blue item" data-value='signup'>
+            Signup
+        </a>
+    </div>
+    <div data-bind="visible: activeSection() == 'login'" class="ui attached padded segment">
+        <form id="login-form"class="ui form" action="/login" method="POST">
+            <div class="field">
+                <label>Username</label>
+                <input type="text" name="username" placeholder="Username...">
+            </div>
+            <div class="field">
+                <label>Password</label>
+                <input type="password" name="password" placeholder="Password...">
+            </div>
+            <div id="submit-login" class="ui submit button">Login</div>
+        </form>
+    </div>
+    <div data-bind="visible: activeSection() == 'signup'" class="ui attached padded segment">
+        <form id="signup-form"class="ui form" action="/signup" method="POST">
+            <div class="field">
+                <label>Username</label>
+                <input type="text" name="username" placeholder="Username...">
+            </div>
+            <div class="field">
+                <label>Password</label>
+                <input type="password" name="password" placeholder="Password...">
+            </div>
+            <div class="field">
+                <label>Confirm Password</label>
+                <input type="password" name="password_confirmation" placeholder="Password...">
+            </div>
+            <button id="submit-signup" class="ui submit button">Signup</button>
+        </form>
+    </div>
+{% endblock %}
+
+{% block full_content %}{% endblock %}
+{% block footer %}
+    <script>
+        var viewModel = {
+            activeSection: ko.observable('login')
+        };
+        ko.applyBindings(viewModel);
+
+        $('body').css('backgroundColor', '#aacaff')
+
+        $(function() {
+          $('a.item').on('click', function(e){
+            var item = $(e.target);
+            item.siblings().removeClass('active');
+            item.addClass('active');
+            viewModel.activeSection(item.data('value'));
+          });
+        });
+
+        $(function() {
+          $('#submit-login').on('click', function(e){
+            $('#login-form').submit();
+          });
+        });
+
+        $(function() {
+          $('#submit-signup').on('click', function(e){
+            $('#signup-form').submit();
+          });
+        });
+    </script>
+{% endblock %}

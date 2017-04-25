@@ -1,7 +1,6 @@
 from celery.task import task
 from application_only_auth import Client, ClientException
-from models import Prospect, Tweet, Hashtag, URL, Media, UserMention
-from database import db_session
+from models import db, Prospect, Tweet, Hashtag, URL, Media, UserMention
 from worker import queue
 from rq.job import Job
 import urllib, json
@@ -39,7 +38,7 @@ def add_prospect(handle):
             utc_offset=user['utc_offset'],
         )
 
-        db_session.merge(prospect)
+        db.session.merge(prospect)
 
     # Add redis task to retrieve the tweets for prospect
     # job = queue.enqueue_call(
@@ -48,7 +47,7 @@ def add_prospect(handle):
     #get_tweets.delay(prospect.id)
     get_tweets(prospect.id)
 
-    db_session.commit()
+    db.session.commit()
 
 @task
 def get_tweets(prospect_id):
@@ -59,7 +58,7 @@ def get_tweets(prospect_id):
         if tweet_id == 0:
             break
     Prospect.query.filter_by(id=prospect_id).update(dict(has_tweets=True))
-    db_session.commit()
+    db.session.commit()
 
 def add_tweet_batch(prospect_id, max_id=None):
     # Create payload
@@ -107,7 +106,7 @@ def add_tweet(tweet, prospect_id):
         country_location=country,
         city_location=city
     )
-    db_session.merge(t)
+    db.session.merge(t)
 
 def add_hashtags(tweet, prospect_id):
     for hashtag_list in tweet['entities']['hashtags']:
@@ -118,7 +117,7 @@ def add_hashtags(tweet, prospect_id):
                 prospect_id=prospect_id,
                 hashtag=hashtag
             )
-            db_session.merge(h)
+            db.session.merge(h)
 
 def add_urls(tweet, prospect_id):
     for url_list in tweet['entities']['urls']:
@@ -129,7 +128,7 @@ def add_urls(tweet, prospect_id):
                 prospect_id=prospect_id,
                 url=url
             )
-            db_session.merge(u)
+            db.session.merge(u)
 
 def add_media(tweet, prospect_id):
     media_list = tweet['entities']['media']
@@ -140,7 +139,7 @@ def add_media(tweet, prospect_id):
             prospect_id=prospect_id,
             url=url
         )
-        db_session.merge(u)
+        db.session.merge(u)
 
 def add_user_mentions(tweet, prospect_id):
     for user_mention_list in tweet['entities']['user_mentions']:
@@ -151,4 +150,4 @@ def add_user_mentions(tweet, prospect_id):
                 prospect_id=prospect_id,
                 user_mention=user_mention
             )
-            db_session.merge(um)
+            db.session.merge(um)

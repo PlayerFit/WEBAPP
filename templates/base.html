@@ -7,23 +7,29 @@
     <link rel="stylesheet" href="/static/css/normalize.css">
     <link rel="stylesheet" href="/static/css/semantic.css">
     <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/components/icon.min.css'>
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/knockout/2.2.0/knockout-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/2.2.0/knockout-min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
     <script src="/static/js/vendor/modernizr.js"></script>
     {% block head %}{% endblock %}
   </head>
   <body>
-      <div class="ui menu">
+      <div class="ui top attached menu">
         <div class="header item">
           Prospector
         </div>
         <a class="item" href="/">Home</a>
         <a class="item" href="/prospect">Prospects</a>
-
+        <div class="right menu">
+            {% if current_user.is_authenticated %}
+                <a class="item" href="/logout">Logout</a>
+            {% else %}
+                <a class="item" href="/login">Signin</a>
+            {% endif %}
+        </div>
       </div>
 
-    <div class="ui grid">
+    <div class="ui attached grid">
       <div class="six wide column">
       </div>
       <div class="ten wide column">
@@ -32,7 +38,7 @@
     </div>
 
     <!-- WARN: use either content or full_content when extending not both!! -->
-    <div class="ui grid">
+    <div class="ui attached grid">
       <div class="four wide column">
       </div>
       <div class="eight wide column">
