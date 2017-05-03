@@ -1,8 +1,9 @@
 {% extends "base.html" %}
 {% block title %}{% endblock %}
-{% block header %}{% endblock %}
 
 {% block content %}
+<div class="four wide column"></div>
+<div class="eight wide column" style="padding-top: 100px">
     <form class="ui inverted form segment" action="/prospect" method="POST">
         <div class="ui fluid action input">
           <input name="handle" type="text" placeholder="Search twitter handles...">
@@ -19,11 +20,15 @@
         </div>
         {% endfor %}
     </div>
+</div>
+<div class="four wide column"></div>
 {% endblock %}
 
 {% block full_content %}{% endblock %}
 {% block footer %}
   <script>
+    $('body').css('background', '#eee');
+
     $(function() {
       $('.ui .item').on('click', function(e){
         var item = $(e.target).closest('.item');

@@ -14,7 +14,7 @@
     {% block head %}{% endblock %}
   </head>
   <body>
-      <div class="ui top attached menu">
+      <div class="ui top attached inverted color-5 menu">
         <div class="header item">
           Prospector
         </div>
@@ -29,32 +29,9 @@
         </div>
       </div>
 
-    <div class="ui attached grid">
-      <div class="six wide column">
-      </div>
-      <div class="ten wide column">
-        <h1 class="ui header">{% block header %}{% endblock %}</h1>
-      </div>
-    </div>
-
-    <!-- WARN: use either content or full_content when extending not both!! -->
-    <div class="ui attached grid">
-      <div class="four wide column">
-      </div>
-      <div class="eight wide column">
-        <div id="main">
+    <div class="ui grid">
           {% block content %}
           {% endblock %}
-        </div>
-      </div>
-      <div class="four wide column">
-      </div>
-    </div>
-
-    <!-- WARN: use either content or full_content when extending not both!! -->
-    <div id="full-main" class="ui container" style="margin-top: -38px">
-        {% block full_content %}
-        {% endblock %}
     </div>
 
     <script src="/static/js/vendor/jquery.js"></script>

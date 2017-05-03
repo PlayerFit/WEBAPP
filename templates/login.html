@@ -1,13 +1,14 @@
 {% extends "base.html" %}
 {% block title %}{% endblock %}
-{% block header %}{% endblock %}
 
 {% block content %}
-    <div class="ui fluid two item top attached huge inverted blue menu">
-        <a class="active blue item" data-value='login'>
+<div class="two wide column"></div>
+<div class="four wide center aligned column main">
+    <div class="ui fluid two item top attached huge inverted orange menu">
+        <a class="active orange item" data-value='login'>
             Login
         </a>
-        <a class="blue item" data-value='signup'>
+        <a class="orange item" data-value='signup'>
             Signup
         </a>
     </div>
@@ -41,9 +42,10 @@
             <button id="submit-signup" class="ui submit button">Signup</button>
         </form>
     </div>
+</div>
+<div class="ten wide column"></div>
 {% endblock %}
 
-{% block full_content %}{% endblock %}
 {% block footer %}
     <script>
         var viewModel = {
@@ -51,7 +53,13 @@
         };
         ko.applyBindings(viewModel);
 
-        $('body').css('backgroundColor', '#aacaff')
+        $('body').css('background', '#eee');
+
+        $('.main').css({
+            'min-height': '600px',
+            'height': $(window).height() * .8,
+            'padding-top': $(window).height() * .2,
+        });
 
         $(function() {
           $('a.item').on('click', function(e){

@@ -1,43 +1,45 @@
 {% extends "base.html" %}
 {% block title %}{% endblock %}
-{% block header %}{% endblock %}
-{% block content %}{% endblock %}
 
-{% block full_content %}
-    <div class="ui secondary pointing menu">
-        <a class="item active" data-value="1">
-        Bio
-        </a>
-        <a class="item" data-value="2">
-        Photos
-        </a>
-    </div>
-    <div data-bind="visible: activeSection() == 1">
-        <div class="ui two column grid">
-            <div class="four wide column">
-                {% include "user_card.html" ignore missing with context %}
+{% block content %}
+    <div class="one wide column"></div>
+    <div class="fourteen wide column">
+        <div class="ui secondary pointing menu">
+            <a class="item active" data-value="1">
+            Bio
+            </a>
+            <a class="item" data-value="2">
+            Photos
+            </a>
+        </div>
+        <div data-bind="visible: activeSection() == 1">
+            <div class="ui two column grid">
+                <div class="four wide column">
+                    {% include "user_card.html" ignore missing with context %}
+                </div>
+                <div class="twelve wide column">
+                    {% include "hourly_usage.html" ignore missing with context %}
+                </div>
             </div>
-            <div class="twelve wide column">
-                {% include "hourly_usage.html" ignore missing with context %}
+            <div class="ui three column grid">
+                <div class="column">
+                    {% include "hashtag_count_info.html" ignore missing with context %}
+                </div>
+                <div class="column">
+                    {% include "user_mention_count_info.html" ignore missing with context %}
+                </div>
+                <div class="column">
+                    {% include "location_count_info.html" ignore missing with context %}
+                </div>
             </div>
         </div>
-        <div class="ui three column grid">
-            <div class="column">
-                {% include "hashtag_count_info.html" ignore missing with context %}
-            </div>
-            <div class="column">
-                {% include "user_mention_count_info.html" ignore missing with context %}
-            </div>
-            <div class="column">
-                {% include "location_count_info.html" ignore missing with context %}
-            </div>
+        <div data-bind="visible: activeSection() == 2">
+            {% for image in images %}
+                <img class="ui medium bordered image" src={{ image[0] }}>
+            {% endfor %}
         </div>
     </div>
-    <div data-bind="visible: activeSection() == 2">
-        {% for image in images %}
-            <img class="ui medium bordered image" src={{ image[0] }}>
-        {% endfor %}
-    </div>
+    <div class="one wide column"></div>
 {% endblock %}
 
 {% block footer %}
@@ -46,7 +48,7 @@
             activeSection: ko.observable(1)
         };
         ko.applyBindings(viewModel);
-        document.body.style.backgroundColor = "#B6BFBF";
+        document.body.style.background = "#B6BFBF";
         $(function() {
           $('a.item').on('click', function(e){
             var item = $(e.target);

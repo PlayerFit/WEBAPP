@@ -1,22 +1,105 @@
 {% extends "base.html" %}
 {% block title %}{% endblock %}
-{% block header %}{% endblock %}
-
-{% block content %}
-    <div class="ui fluid image">
-        <img src="/static/img/logo.png" placeholder="Prospector">
-    </div>
-    <form class="ui inverted form segment" action="/prospect" method="POST">
-        <div class="ui fluid action input">
-          <input name="handle" type="text" placeholder="Search twitter handles...">
-          <div class="ui submit button">Search</div>
-        </div>
-    </form>
+{% block head %}
+<style>
+.space-top {
+    padding-top: 80px !important;
+}
+.space-bot {
+    padding-bottom: 80px !important;
+}
+.tagline {
+    display: block;
+    font-style: italic;
+    font-size: 2.75em;
+    font-weight: bold;
+    font-family: Lato,Helvetica Neue,Arial,Helvetica,sans-serif;
+}
+.library {
+    display: block;
+    font-size: 75px;
+    line-height: 75px;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-family: Lato,Helvetica Neue,Arial,Helvetica,sans-serif;
+}
+.ui.button.clickable {
+    font-size: 21px;
+    line-height: 21px;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-family: Lato,Helvetica Neue,Arial,Helvetica,sans-serif;
+}
+</style>
 {% endblock %}
 
-{% block full_content %}{% endblock %}
+{% block content %}
+    <div class="ui sixteen wide column">
+        <div class="ui inverted vertical segment">
+            <div class="ui page middle aligned grid splash">
+                <div class="center aligned column" style="background: rgba(0,0,0,.5)">
+                    <h2 class="ui tagline">Welcome to Prospector!</h2>
+                    <h1 class="ui library">Start digging into Twitter Data</h1>
+                    <div id="slide-to" class="ui inverted orange button clickable">Tell Me More</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="services" class="ui vertical segment">
+            <div class="ui center aligned one column grid space-top">
+                <div class="ui center aligned column">
+                    <h1 class="ui library">Services</h1>
+                    <h2 class="ui tagline">offering a variety of analytics</h2>
+                </div
+            </div>
+            <div class="ui center aligned four column grid space-bot">
+                <div class="center aligned column">
+                    <i class="huge circular orange twitter icon"></i>
+                    <h3 class="ui header">Twitter Data</h3>
+                    <p>We integrate with Twitter's REST api to get up to date information and metadata about prospects social media habits</p>
+                </div>
+                <div class="center aligned column">
+                    <i class="huge circular orange bar chart icon"></i>
+                    <h3 class="ui header">Timeseries Analysis</h3>
+                    <p>Easily identify potential bad habits by visualizing prospects tweets by time of day</p>
+                </div>
+                <div class="center aligned column">
+                    <i class="huge circular orange pie chart icon"></i>
+                    <h3 class="ui header">Content Investigation</h3>
+                    <p>Explore the trends in prospects' content with emoji, profanity, sentiment, etc. analysis</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="ui vertical segment" style="background-color: #eee">
+            <div class="ui center aligned one column grid space-top space-bot">
+                <div class="ui center aligned column">
+                    <h1 class="ui library">Public Release</h1>
+                    <h2 class="ui tagline">tbd</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
 {% block footer %}
     <script>
-        $('body').css('backgroundColor', '#2185D0')
+        $('.splash').css({
+            'min-height': '560px',
+            'height': $(window).height() * .8,
+            'background-image': 'url('+'/static/img/splash.jpg'+')',
+            'background-repeat': 'no-repeat',
+            'background-size': 'cover',
+            'background-attachment': 'fixed'
+        });
+        $('.odd').css('backgroundColor', '#eee');
+        $(function() {
+            $('#slide-to').on('click', function(e) {
+                $('html,body').animate({
+                    scrollTop: $("#services").offset().top},
+                'slow');
+            });
+        });
+
     </script>
 {% endblock %}
