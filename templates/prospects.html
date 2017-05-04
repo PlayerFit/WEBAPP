@@ -10,9 +10,11 @@
           <div class="ui submit button">Add</div>
         </div>
     </form>
+
+    <h3 class="ui header">Prospects ready for analysis:</div>
     <div class="ui middle aligned divided link list" style="padding-bottom: 40px;">
         {% for prospect in processed %}
-        <div class="item" data-value={{ prospect.id }}>
+        <div class="item clickable" data-value={{ prospect.id }}>
             <img class="ui avatar image" src={{ prospect.img_url }}>
             <div class="content">
               <div class="header">{{ prospect.name }}</div>
@@ -21,6 +23,7 @@
         {% endfor %}
     </div>
 
+    <h3 class="ui header">Prospects currently processing:</div>
     <div class="ui middle aligned divided link list" style="padding-bottom: 40px;">
         {% for prospect in processing %}
         <div class="item" data-value={{ prospect.id }}>
@@ -41,7 +44,7 @@
     $('body').css('background', '#eee');
 
     $(function() {
-      $('.ui .item').on('click', function(e){
+      $('.ui .item .clickable').on('click', function(e){
         var item = $(e.target).closest('.item');
         var prospect_id = item.data('value');
         window.location = "/prospect/" + prospect_id;
