@@ -134,7 +134,7 @@ def add_media(tweet, prospect_id):
     if 'media' in tweet['entities']:
         media_list = tweet['entities']['media']
         for media in media_list:
-            url = media['display_url']
+            url = media['media_url']
             u = Media(
                 tweet_id=tweet['id_str'],
                 prospect_id=prospect_id,
