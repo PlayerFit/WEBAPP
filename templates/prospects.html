@@ -11,7 +11,7 @@
         </div>
     </form>
 
-    <h3 class="ui header">Prospects ready for analysis:</div>
+    <h3 class="ui header">Prospects ready for analysis:</h3>
     <div class="ui middle aligned divided link list" style="padding-bottom: 40px;">
         {% for prospect in processed %}
         <div class="item clickable" data-value={{ prospect.id }}>
@@ -23,7 +23,7 @@
         {% endfor %}
     </div>
 
-    <h3 class="ui header">Prospects currently processing:</div>
+    <h3 class="ui header">Prospects currently processing:</h3>
     <div class="ui middle aligned divided link list" style="padding-bottom: 40px;">
         {% for prospect in processing %}
         <div class="item" data-value={{ prospect.id }}>
