@@ -5,11 +5,12 @@ Flask-SQLAlchemy==2.2
 gunicorn==19.7.1
 itsdangerous==0.24
 Jinja2==2.9.6
-oauthlib==2.0.2
+kombu==4.0.2
 passlib==1.7.1
+psycopg2==2.7
 redis==2.10.5
-requests==2.9.1
-requests-oauthlib==0.8.0
 rq==0.7.1
+SQLAlchemy==1.1.6
 twitter-application-only-auth==0.3.3
+virtualenv==13.1.2
 Werkzeug==0.12.1
