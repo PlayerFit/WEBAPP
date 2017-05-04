@@ -1,0 +1,15 @@
+Flask==0.12.1
+Flask-HTTPAuth==3.2.2
+Flask-Login==0.4.0
+Flask-SQLAlchemy==2.2
+gunicorn==19.7.1
+itsdangerous==0.24
+Jinja2==2.9.6
+oauthlib==2.0.2
+passlib==1.7.1
+redis==2.10.5
+requests==2.9.1
+requests-oauthlib==0.8.0
+rq==0.7.1
+twitter-application-only-auth==0.3.3
+Werkzeug==0.12.1
