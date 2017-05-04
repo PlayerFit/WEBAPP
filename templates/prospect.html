@@ -34,9 +34,11 @@
             </div>
         </div>
         <div data-bind="visible: activeSection() == 2">
-            {% for image in images %}
-                <img class="ui medium bordered image" src={{ image[0] }}>
-            {% endfor %}
+            <div class="ui grid">
+                {% for image in images %}
+                    <img class="ui bordered image" src={{ image[0] }}>
+                {% endfor %}
+            </div>
         </div>
     </div>
     <div class="one wide column"></div>

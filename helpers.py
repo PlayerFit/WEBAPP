@@ -1,4 +1,5 @@
-from models import db, Tweet, Prospect, Hashtag, Media, UserMention, URL
+from app import db
+from models import *
 
 def get_tweets_by_hour(prospect_id):
     utc_offset = int(Prospect.query.with_entities(Prospect.utc_offset).filter_by(id=prospect_id).one()[0])

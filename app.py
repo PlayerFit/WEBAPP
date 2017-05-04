@@ -1,49 +1,26 @@
+import os
+import time
+from rq import Queue
+from rq.job import Job
+from worker import conn
 from flask import Flask, redirect, url_for, request, jsonify, render_template, session, abort
+from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_required, login_user, logout_user
-from celery import Celery
-from models import db, User, Prospect, Tweet
-from twitter import add_prospect
+
+app = Flask(__name__)
+app.config.from_object(os.environ['APP_SETTINGS'])
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+
+q = Queue(connection=conn)
 
 import helpers as h
+from tasks import add_prospect, get_tweets
+from models import *
 
-# SETUP APP
-app = Flask(__name__)
-app.config.update(
-    CELERY_BROKER_URL='redis://localhost:6379',
-    CELERY_RESULT_BACKEND='redis://localhost:6379',
-    SECRET_KEY='secret'
-)
-# APP SETUP
-
-# SETUP DB
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://alhqpbkb:WQ-RjLbw5LrkrBMJcFKWWfbaxhsyReTs@babar.elephantsql.com:5432/alhqpbkb'
-db.init_app(app)
-with app.app_context():
-    db.create_all()
-# DB SETUP
-
-# SETUP LOGIN
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
-# LOGIN SETUP
-
-# SETUP CELERY
-def make_celery(app):
-    celery = Celery(app.import_name, backend=app.config['CELERY_RESULT_BACKEND'],
-                    broker=app.config['CELERY_BROKER_URL'])
-    celery.conf.update(app.config)
-    TaskBase = celery.Task
-    class ContextTask(TaskBase):
-        abstract = True
-        def __call__(self, *args, **kwargs):
-            with app.app_context():
-                return TaskBase.__call__(self, *args, **kwargs)
-    celery.Task = ContextTask
-    return celery
-
-celery = make_celery(app)
-# CELERY SETUP
 
 ####################################
 #### LOGIN/LOGOUT/SIGNUP ROUTES ####
@@ -95,7 +72,6 @@ def logout():
 @login_manager.user_loader
 def load_user(userid):
     user = User.query.filter_by(id=userid).first()
-    print user
     return user
 ############################
 
@@ -112,11 +88,14 @@ def home():
 def prospect():
     if request.method == 'POST':
         prospect_handle = request.form["handle"]
-        add_prospect(prospect_handle)
+        job = q.enqueue(add_prospect, prospect_handle)
+        time.sleep(3)
+        q.enqueue(get_tweets, job.result, depends_on=job, timeout=600)
         return redirect(url_for('prospect'))
     elif request.method == 'GET':
-        prospect_list = Prospect.query.with_entities(Prospect.id, Prospect.img_url, Prospect.name).all()
-        return render_template("prospects.html", items=prospect_list)
+        processed = Prospect.query.with_entities(Prospect.id, Prospect.img_url, Prospect.name).filter_by(has_tweets=True).all()
+        processing = Prospect.query.with_entities(Prospect.id, Prospect.img_url, Prospect.name).filter_by(has_tweets=False).all()
+        return render_template("prospects.html", processed=processed, processing=processing)
     else:
         return redirect(url_for('home'))
 
@@ -133,3 +112,6 @@ def prospect_one(prospect_id):
     return render_template('prospect.html', prospect=prospect, tweets_by_hour=tweets_by_hour, hashtags=top_hashtags,
         user_mentions=top_user_mentions, locations=top_locations, images=images)
 ###############################
+
+if __name__ == '__main__':
+    app.run()

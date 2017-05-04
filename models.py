@@ -1,7 +1,6 @@
-from flask_sqlalchemy import SQLAlchemy
+from app import db
 from flask_login import UserMixin
 from passlib.apps import custom_app_context as pwd_context
-db = SQLAlchemy()
 
 class User(db.Model, UserMixin):
     __tablename__ = 'users'

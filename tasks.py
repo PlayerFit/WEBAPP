@@ -1,9 +1,5 @@
-from celery.task import task
-from application_only_auth import Client, ClientException
-from models import db, Prospect, Tweet, Hashtag, URL, Media, UserMention
-from worker import queue
-from rq.job import Job
 import urllib, json
+from application_only_auth import Client, ClientException
 
 CONSUMER_KEY = 	"c9MrxfE3ohZIB5xaXUtCEkuzZ"
 CONSUMER_SECRET = "lv3mTkTGkIrVMQGwxiGxGWzGFtvOLy8RrJ8IBIgkyug5JZO6OX"
@@ -15,6 +11,8 @@ FRIEND_ENDPOINT = "https://api.twitter.com/1.1/friends/ids.json?"
 client = Client(CONSUMER_KEY, CONSUMER_SECRET)
 
 def add_prospect(handle):
+    from app import db
+    from models import Prospect
     prospect = Prospect.query.filter_by(screen_name=handle).first()
     if prospect is None:
         payload = {"screen_name": handle}
@@ -37,23 +35,16 @@ def add_prospect(handle):
             protected=user['protected'],
             utc_offset=user['utc_offset'],
         )
-
         db.session.merge(prospect)
+        db.session.commit()
+    return prospect.id
 
-    # Add redis task to retrieve the tweets for prospect
-    # job = queue.enqueue_call(
-    #     func=get_tweets, args=(prospect.id, ), result_ttl=0
-    # )
-    #get_tweets.delay(prospect.id)
-    get_tweets(prospect.id)
-
-    db.session.commit()
-
-@task
 def get_tweets(prospect_id):
+    from app import db
+    from models import Prospect
     tweet_id = None
     # Begin collecting tweets 200/req up to 3200 tweets
-    for batch in range(0, 1):
+    for batch in range(0, 16):
         tweet_id = add_tweet_batch(prospect_id, tweet_id)
         if tweet_id == 0:
             break
@@ -69,6 +60,7 @@ def add_tweet_batch(prospect_id, max_id=None):
     # Build URL
     url = "{}{}".format(TWEET_ENDPOINT, urllib.urlencode(payload))
     # Make requests and retry if RATE LIMIT reached
+    print url
     tweets = client.request(url)
     if len(tweets) == 0:
         return 0
@@ -83,6 +75,8 @@ def add_tweet_batch(prospect_id, max_id=None):
     return tweets[-1]["id"]
 
 def add_tweet(tweet, prospect_id):
+    from app import db
+    from models import Tweet
     if 'retweeted_status' in tweet:
         retweet = True
         favorite_count = tweet['retweeted_status']['favorite_count']
@@ -109,6 +103,8 @@ def add_tweet(tweet, prospect_id):
     db.session.merge(t)
 
 def add_hashtags(tweet, prospect_id):
+    from app import db
+    from models import Hashtag
     for hashtag_list in tweet['entities']['hashtags']:
         if len(hashtag_list) > 0:
             hashtag = hashtag_list["text"]
@@ -120,6 +116,8 @@ def add_hashtags(tweet, prospect_id):
             db.session.merge(h)
 
 def add_urls(tweet, prospect_id):
+    from app import db
+    from models import URL
     for url_list in tweet['entities']['urls']:
         if len(url_list) > 0:
             url = url_list['display_url']
@@ -131,17 +129,22 @@ def add_urls(tweet, prospect_id):
             db.session.merge(u)
 
 def add_media(tweet, prospect_id):
-    media_list = tweet['entities']['media']
-    for media in media_list:
-        url = url_list['media_url']
-        u = Media(
-            tweet_id=tweet['id_str'],
-            prospect_id=prospect_id,
-            url=url
-        )
-        db.session.merge(u)
+    from app import db
+    from models import Media
+    if 'media' in tweet['entities']:
+        media_list = tweet['entities']['media']
+        for media in media_list:
+            url = media['display_url']
+            u = Media(
+                tweet_id=tweet['id_str'],
+                prospect_id=prospect_id,
+                url=url
+            )
+            db.session.merge(u)
 
 def add_user_mentions(tweet, prospect_id):
+    from app import db
+    from models import UserMention
     for user_mention_list in tweet['entities']['user_mentions']:
         if len(user_mention_list) > 0:
             user_mention = user_mention_list['screen_name']
