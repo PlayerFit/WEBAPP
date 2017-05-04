@@ -4,36 +4,45 @@
 {% block content %}
 <div class="four wide column"></div>
 <div class="eight wide column" style="padding-top: 100px">
+
     <form class="ui inverted form segment" action="/prospect" method="POST">
         <div class="ui fluid action input">
           <input name="handle" type="text" placeholder="Search twitter handles...">
-          <div class="ui submit button">Add</div>
+          <div class="ui green submit button">Add</div>
         </div>
     </form>
+    <h3 class="ui header">Prospects currently processing:</h3>
+    {% if processing|length < 1 %}
+        <div class="ui blue message">
+            <p>There are no prospects queued to be processed. Search a twitter handle above to add prospects.
+            </p>
+        </div>
+    {% else %}
+        <div class="ui middle aligned divided link list" style="padding-bottom: 40px;">
+            {% for prospect in processing %}
+            <div class="item" data-value={{ prospect.id }}>
+                <img class="ui avatar image" src={{ prospect.img_url }}>
+                <div class="content">
+                  <div class="header">{{ prospect.name }}</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
 
     <h3 class="ui header">Prospects ready for analysis:</h3>
     <div class="ui middle aligned divided link list" style="padding-bottom: 40px;">
         {% for prospect in processed %}
-        <div class="item clickable" data-value={{ prospect.id }}>
+        <div class="item clickable">
             <img class="ui avatar image" src={{ prospect.img_url }}>
             <div class="content">
               <div class="header">{{ prospect.name }}</div>
             </div>
+            <div class="ui right floated mini orange button" data-value={{ prospect.id }}>View</div>
         </div>
         {% endfor %}
     </div>
 
-    <h3 class="ui header">Prospects currently processing:</h3>
-    <div class="ui middle aligned divided link list" style="padding-bottom: 40px;">
-        {% for prospect in processing %}
-        <div class="item" data-value={{ prospect.id }}>
-            <img class="ui avatar image" src={{ prospect.img_url }}>
-            <div class="content">
-              <div class="header">{{ prospect.name }}</div>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
 </div>
 <div class="four wide column"></div>
 {% endblock %}
@@ -44,8 +53,8 @@
     $('body').css('background', '#eee');
 
     $(function() {
-      $('.ui .item .clickable').on('click', function(e){
-        var item = $(e.target).closest('.item');
+      $('.ui .button').on('click', function(e){
+        var item = $(e.target);
         var prospect_id = item.data('value');
         window.location = "/prospect/" + prospect_id;
       });
