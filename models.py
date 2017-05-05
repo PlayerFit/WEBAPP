@@ -47,6 +47,9 @@ class Prospect(db.Model):
         self.protected = protected
         self.utc_offset = utc_offset
         self.has_tweets = False
+        print utc_offset
+        if utc_offset == None:
+            self.utc_offset = 0
 
 class Tweet(db.Model):
     id = db.Column(db.Text, primary_key=True)
